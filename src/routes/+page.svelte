@@ -1,9 +1,20 @@
 <script>
+	import { goto } from "$app/navigation";
+	import { page } from "$app/stores";
+	import { onMount } from "svelte";
 	import Button from './Button.svelte';
+
+	function logout() {
+		goto('/auth/logout');
+	}
+
+	onMount(() => {
+		console.log($page.data);
+	})
 </script>
 
 <svelte:head>
-	<title>Home</title>
+	<title>Home {$page.data.user?.login || ''}</title>
 	<meta name="description" content="Svelte demo app" />
 </svelte:head>
 
@@ -15,10 +26,17 @@
 	</h1>
 
 	<h2>
-		click to sign in with Github
+		{$page.data.user?.login ? 'you\'re logged !' : 'click to sign in with Github'}
 	</h2>
 
-	<Button />
+	{#if !$page.data.user?.login}
+		<Button />		
+	{:else}
+		<div>
+			<h1>Hello {$page.data.user?.login}!</h1>
+			<button on:click|preventDefault={logout}>Log out</button>
+		</div>
+	{/if}
 </section>
 
 <style>
